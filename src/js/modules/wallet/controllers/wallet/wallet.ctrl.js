@@ -54,6 +54,11 @@
             }
         ];
 
+        $scope.walletSecurityProgress = {
+            progressStates: ['danger', 'warning', 'info', 'success'],
+            progress: 100 // 0 to 100!
+        };
+
         $scope.isLoadingNewWallet = false;
 
         // track when wallet is activated (first time > 0 balance)
