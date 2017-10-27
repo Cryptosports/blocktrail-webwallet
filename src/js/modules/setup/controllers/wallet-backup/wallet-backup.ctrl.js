@@ -95,13 +95,17 @@
                 launchService.clearBackupInfo()
                     .then(function() {
                         return launchService.getWalletInfo().then(function(walletInfo) {
-                            return walletsManagerService.setActiveWalletByNetworkTypeAndIdentifier(sdkService.getNetworkType(), walletInfo.identifier);
+                            return walletsManagerService.fetchWalletsList()
+                                .then(function () {
+                                    return walletsManagerService.setActiveWalletByNetworkTypeAndIdentifier(sdkService.getNetworkType(), walletInfo.identifier);
+                                })
                         })
                     })
                     .then(function() {
                         $state.go('app.wallet.summary');
-                    })
-                ;
+                    }).catch(function () {
+                        $scope.working = false;
+                });
             }
         };
     }

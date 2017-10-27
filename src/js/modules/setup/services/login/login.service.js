@@ -110,9 +110,9 @@
         return self._launchService.storeAccountInfo(accountInfo)
             .then(function() {
                 return self._setupService.setUserInfo({
-                    username: data.responseData.username,
-                    displayName: data.responseData.username,
-                    email: data.responseData.email
+                    username:       data.responseData.username,
+                    displayName:    data.responseData.username,
+                    email:          data.responseData.email
                 });
             })
             .then(function() {

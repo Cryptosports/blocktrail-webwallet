@@ -126,6 +126,7 @@
 
         // add info from setup process to the settings
         setupService.getUserInfo().then(function(userInfo) {
+            // TODO: setup data missing on refresh
             if (userInfo.username || userInfo.displayName || userInfo.email) {
                 var updateSettings = {
                     username: userInfo.username || $scope.settings.username,
