@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    angular.module("blocktrail.wallet")
+    angular.module("blocktrail.core")
         .directive("walletEmailVerified", walletEmailVerified);
 
     function walletEmailVerified() {

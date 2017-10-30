@@ -4,25 +4,51 @@
     angular.module('blocktrail.core')
         .factory('accountSecurityService', AccountSecurityService);
 
-    function AccountSecurityService(CONFIG, settingsService, $http, launchService, sdkService) {
+    function AccountSecurityService(CONFIG, settingsService, $http, storageService, launchService, $q) {
+
+        var dataStoreId = 'account-security';
+        var storage = storageService.db('account-security');
+
+        function setInfo(newData) {
+            return $q.when(storage.get('account-security'))
+                .then(function(doc) { return doc; }, function() { return {_id: dataStoreId}; })
+                .then(function(doc) {
+                    angular.forEach(newData, function(value, key) {
+                        doc[key] = newData[key];
+                    });
+
+                    return storage.put(doc).then(function() {
+                        return true;
+                    });
+                });
+        };
+
+        function getInfo() {
+            return $q.when(storage.get('account-security'))
+                .then(function(doc) { return doc; }, function() { return {_id: dataStoreId}; });
+        }
 
         function getSecurityScore() {
 
             var settings = settingsService.getReadOnlySettingsData();
 
-            var score = 0.35 * settings.verifiedEmail + 0.35 * (settings.passwordScore / 4);
+            return getInfo().then(function(info) {
 
-            return launchService.getAccountInfo().then(function (accountInfo) {
-                if (accountInfo.requires2FA) {
-                    score += 0.3 * accountInfo.requires2FA
-                }
+                var score = 0.35 * settings.verifiedEmail + 0.35 * (info.passwordScore / 4);
 
-                console.log('SCORE', score, {
-                    pwscore: settings.passwordScore,
-                    requ2fa: accountInfo.requires2FA
+                return launchService.getAccountInfo().then(function (accountInfo) {
+                    if (accountInfo.requires2FA) {
+                        score += 0.3 * accountInfo.requires2FA
+                    }
+
+                    console.log('SCORE', score, {
+                        pwscore: info.passwordScore,
+                        requ2fa: accountInfo.requires2FA,
+                        emailver: settings.verifiedEmail
+                    });
+
+                    return score * 100;
                 });
-
-                return score * 100;
             });
         }
 
@@ -36,6 +62,8 @@
         }
 
         return {
+            setInfo: setInfo,
+            getInfo: getInfo,
             verifyEmail: verifyEmail,
             getSecurityScore: getSecurityScore
         };
