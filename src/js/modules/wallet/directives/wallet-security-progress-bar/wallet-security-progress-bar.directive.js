@@ -9,8 +9,7 @@
             restrict: "E",
             replace: true,
             scope: {
-                ngClass: '=',
-                localScope: '='
+                progressData: '='
             },
             templateUrl: "js/modules/wallet/directives/wallet-security-progress-bar/wallet-security-progress-bar.tpl.html"
         };
